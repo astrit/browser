@@ -1,6 +1,8 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const serve = require("electron-serve");
 const path = require("path");
+
+let mainWindow; // Define mainWindow at a higher scope
 
 const appServe = app.isPackaged
   ? serve({
@@ -12,6 +14,7 @@ const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    frame: false,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -29,6 +32,26 @@ const createWindow = () => {
     });
   }
 };
+
+app.on("navigate", (event, url) => {
+  mainWindow.loadURL(url);
+});
+
+app.on("navigate-back", () => {
+  if (mainWindow.webContents.canGoBack()) {
+    mainWindow.webContents.goBack();
+  }
+});
+
+app.on("navigate-forward", () => {
+  if (mainWindow.webContents.canGoForward()) {
+    mainWindow.webContents.goForward();
+  }
+});
+
+app.on("refresh", () => {
+  mainWindow.webContents.reload();
+});
 
 app.on("ready", () => {
   createWindow();

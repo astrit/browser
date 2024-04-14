@@ -1,10 +1,8 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld("electronAPI", {
-  on: (channel, callback) => {
-    ipcRenderer.on(channel, callback);
-  },
-  send: (channel, args) => {
-    ipcRenderer.send(channel, args);
-  },
+contextBridge.exposeInMainWorld("electron", {
+  navigate: (url) => ipcRenderer.send("navigate", url),
+  navigateBack: () => ipcRenderer.send("navigate-back"),
+  navigateForward: () => ipcRenderer.send("navigate-forward"),
+  refresh: () => ipcRenderer.send("refresh"),
 });

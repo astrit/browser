@@ -1,0 +1,8 @@
+footer.main-footer {
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 20px;
+  width: 100%;
+  padding: 0 20px;
+}
