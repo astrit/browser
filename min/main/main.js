@@ -215,10 +215,12 @@ function createWindowWithBounds(bounds) {
     y: bounds.y,
     minWidth: process.platform === "win32" ? 400 : 320, // controls take up more horizontal space on Windows
     minHeight: 350,
-    titleBarStyle: settings.get("useSeparateTitlebar") ? "default" : "hidden",
+    // titleBarStyle: hidden,
+    // titleBarStyle: settings.get("useSeparateTitlebar") ? "default" : "hidden",
     trafficLightPosition: { x: 12, y: 10 },
     icon: __dirname + "/icons/icon256.png",
-    frame: settings.get("useSeparateTitlebar"),
+    frame: false,
+    // frame: settings.get("useSeparateTitlebar"),
     alwaysOnTop: settings.get("windowAlwaysOnTop"),
     backgroundColor: "#fff", // the value of this is ignored, but setting it seems to work around https://github.com/electron/electron/issues/10559
     webPreferences: {

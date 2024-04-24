@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <div>
+      <button id="back">Back</button>
+      <button id="forward">Forward</button>
+      <input id="url" type="text" />
+      <button id="go">Go</button>
+    </div>
+
+    <script>
+      const { ipcRenderer } = require("electron");
+
+      document.getElementById("back").addEventListener("click", () => {
+        ipcRenderer.send("navigate", "http://google.com");
+      });
+
+      document.getElementById("forward").addEventListener("click", () => {
+        ipcRenderer.send("navigate", "http://github.com");
+      });
+
+      document.getElementById("go").addEventListener("click", () => {
+        let url = document.getElementById("url").value;
+        if (!url.match(/^[a-zA-Z]+:\/\//)) {
+          url = "http://" + url;
+        }
+        ipcRenderer.send("navigate", url);
+      });
+    </script>
+  </body>
+</html>

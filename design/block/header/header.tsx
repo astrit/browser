@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ipcRenderer } from "electron";
 import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
@@ -21,24 +21,27 @@ export default function Header() {
   const path = usePathname();
   const [url, setUrl] = useState(path);
 
-  const handleUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUrl(event.target.value);
-  };
+  useEffect(() => {
+    // Make sure the 'electron' object is available
+    if (!window.electron) {
+      console.error("Electron object is not available");
+      return;
+    }
+  }, []);
 
-  const handleUrlSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+  const navigate = (url: string) => {
     window.electron.navigate(url);
   };
 
-  const handleBack = () => {
+  const navigateBack = () => {
     window.electron.navigateBack();
   };
 
-  const handleForward = () => {
+  const navigateForward = () => {
     window.electron.navigateForward();
   };
 
-  const handleRefresh = () => {
+  const refresh = () => {
     window.electron.refresh();
   };
 
@@ -46,14 +49,16 @@ export default function Header() {
     <header className="main-header">
       <Left>
         <Nav />
-        <button onClick={handleBack}>Back</button>
-        <button onClick={handleForward}>Forward</button>
-        <button onClick={handleRefresh}>Refresh</button>
-        <form onSubmit={handleUrlSubmit}>
-          <input type="text" value={url} onChange={handleUrlChange} />
-        </form>
+        {/* <button onClick={() => navigate("https://example.com")}>
+          Go to example.com
+        </button> */}
+        <button onClick={() => window.electron.navigate("https://example.com")}>
+          Go to example.com
+        </button>
+        <button onClick={navigateBack}>Back</button>
+        <button onClick={navigateForward}>Forward</button>
+        <button onClick={refresh}>Refresh</button>
       </Left>
-      {/* <small></small> */}
       <Right>{path !== "/about" && <Link href="/bout">~ 2024</Link>}</Right>
     </header>
   );

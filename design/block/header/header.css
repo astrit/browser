@@ -8,11 +8,9 @@ header.main-header {
   padding-block: var(--slant-size-28);
   width: 100%;
   pointer-events: none;
-  /* -webkit-app-region: drag; */
 
   .sides {
     pointer-events: initial;
-    -webkit-app-region: no-drag;
   }
 
   .left {

@@ -5,7 +5,7 @@ export default function Page(): JSX.Element {
   return (
     <Home>
       <h1>
-        <span>Bro</span>
+        <span>Core</span>
       </h1>
     </Home>
   );

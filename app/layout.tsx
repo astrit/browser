@@ -65,7 +65,7 @@ export default function RootLayout({
               <Main>
                 <Header />
                 <Article>{children}</Article>
-                <Footer />
+                {/* <Footer /> */}
               </Main>
             </Fonts>
           </Provider>

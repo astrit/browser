@@ -31,6 +31,8 @@ const createWindow = () => {
       win.webContents.reloadIgnoringCache();
     });
   }
+
+  win.loadFile(path.join(__dirname, "index.html"));
 };
 
 app.on("navigate", (event, url) => {

@@ -4,6 +4,8 @@
 html {
   scrollbar-width: none;
   font-size: 10px;
+  padding: 20px;
+  -webkit-app-region: drag;
 }
 
 body {
@@ -24,5 +26,5 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
-  /* -webkit-app-region: drag; */
+  -webkit-app-region: no-drag;
 }
