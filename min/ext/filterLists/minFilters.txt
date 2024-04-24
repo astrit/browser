@@ -1,1 +1,0 @@
-@@/browserinfo$domain=accounts.google.com
