@@ -1,12 +1,12 @@
 import { useRef, useState } from 'react'
 import './assets/styles.css'
 import AddressBar from './components/AddressBar'
-import useWindowsDimensions from './hooks/useWindowsDimensions'
+// import useWindowsDimensions from './hooks/useWindowsDimensions'
 import Splash from './components/Splash'
 
 function App(): JSX.Element {
   const [url, setUrl] = useState<string>('')
-  const windowDimensions = useWindowsDimensions()
+  // const windowDimensions = useWindowsDimensions()
   const webviewRef = useRef<HTMLWebViewElement>(null)
 
   return (
@@ -16,10 +16,10 @@ function App(): JSX.Element {
         <webview
           ref={webviewRef}
           src={`${url.includes('https://') ? '' : 'https://'}${url}`}
-          style={{
-            height: windowDimensions.height
-            // height: windowDimensions.height - 54
-          }}
+          // style={{
+          //   // height: windowDimensions.height
+          //   // height: windowDimensions.height - 54
+          // }}
         ></webview>
       ) : (
         <Splash />
