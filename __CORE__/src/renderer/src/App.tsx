@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import './assets/styles.css'
-import AddressBar from './components/AddressBar'
+import AddressBar from './components/address/address'
 // import useWindowsDimensions from './hooks/useWindowsDimensions'
-import Splash from './components/Splash'
+import Splash from './components/splash/splash'
 
 function App(): JSX.Element {
   const [url, setUrl] = useState<string>('')
@@ -13,14 +13,7 @@ function App(): JSX.Element {
     <>
       <AddressBar setUrl={setUrl} url={url} />
       {url ? (
-        <webview
-          ref={webviewRef}
-          src={`${url.includes('https://') ? '' : 'https://'}${url}`}
-          // style={{
-          //   // height: windowDimensions.height
-          //   // height: windowDimensions.height - 54
-          // }}
-        ></webview>
+        <webview ref={webviewRef} src={`${url.includes('https://') ? '' : 'https://'}${url}`} />
       ) : (
         <Splash />
       )}

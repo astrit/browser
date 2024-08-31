@@ -1,6 +1,8 @@
+// import { app, shell, ipcMain } from 'electron'
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+// import { BrowserWindow } from 'electron-acrylic-window';
 import icon from '../../resources/icon.png?asset'
 
 function createWindow(): void {
@@ -10,12 +12,18 @@ function createWindow(): void {
     height: 670,
     show: false,
     autoHideMenuBar: true,
+    transparent: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false,
       webviewTag: true
     },
+    vibrancy: 'fullscreen-ui', // on MacOS
+    backgroundMaterial: 'acrylic', // on Windows 11
+    // titleBarStyle: 'hidden',
+    // trafficLightPosition: { x: 20, y: 20 },
+    // trafficLightPosition: { x: 20, y: 20 },
     frame: false
   })
 
@@ -26,6 +34,17 @@ function createWindow(): void {
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
+  })
+
+  // Listen for Cmd + K shortcut
+  // Listen for Cmd + K shortcut
+  // Listen for Cmd + K shortcut
+  // Listen for Cmd + K shortcut
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.meta && input.key.toLowerCase() === 'k') {
+      event.preventDefault()
+      mainWindow.webContents.send('toggle-address-bar')
+    }
   })
 
   // HMR for renderer base on electron-vite cli.
