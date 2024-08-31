@@ -1,12 +1,14 @@
 .address {
   display: flex;
   gap: 1ch;
-  width: 100%;
-  background-color: rgba(255, 255, 255, 0);
+  background-color: rgb(28, 28, 28);
   border-radius: 8px;
-  height: 24px;
-  backdrop-filter: blur(20px);
+  height: 40px;
+  /* backdrop-filter: blur(20px); */
   overflow: hidden;
+  position: fixed;
+  inset: auto 16px 16px 16px;
+  box-sizing: border-box;
 
   input {
     min-width: 100%;
