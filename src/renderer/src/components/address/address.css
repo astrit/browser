@@ -1,18 +1,11 @@
 .address {
   display: flex;
   gap: 1ch;
-  background-color: rgb(28, 28, 28);
   border-radius: 8px;
-  height: 40px;
-  /* backdrop-filter: blur(20px); */
-  overflow: hidden;
-  position: fixed;
-  inset: auto 16px 16px 16px;
   box-sizing: border-box;
+  z-index: 1000;
 
   input {
-    min-width: 100%;
-    -webkit-app-region: drag;
     height: 100%;
     display: flex;
     border: none;
@@ -20,6 +13,67 @@
     outline: none;
     color: #fff;
     box-sizing: border-box;
-    padding: 0.5lh 2ch;
+    flex: 1;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      appearance: none;
+      border: none;
+      background: none;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      opacity: 0.4;
+
+      &:hover {
+        opacity: 1;
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 40px;
+    /* border: 1px solid rgba(255, 255, 255, 0.1); */
+    width: 100%;
+    gap: 4px;
+    /* padding: 6px; */
+
+    button {
+      border-radius: 200px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 1/1;
+      background-color: rgba(255, 255, 255, 0.04);
+
+      svg {
+        height: 12px;
+        width: 12px;
+      }
+    }
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 }
