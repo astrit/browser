@@ -3,7 +3,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 // import { BrowserWindow } from 'electron-acrylic-window';
-import icon from '../../resources/icon.png?asset'
+import icon from '../../512x512.png?asset'
 
 function createWindow(): void {
   // Create the browser window.

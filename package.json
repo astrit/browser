@@ -6,6 +6,15 @@
   "author": "astrit",
   "homepage": "https://trekend.com/core",
   "productName": "Core",
+  "build": {
+    "appId": "com.electron.app",
+    "mac": {
+      "icon": "512x512.png"
+    },
+    "directories": {
+      "buildResources": "./"
+    }
+  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
