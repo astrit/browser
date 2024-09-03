@@ -1,8 +1,30 @@
 .splash {
-  color: #fff;
   font-family: sans-serif;
   background-color: hsla(0, 0%, 100%, 0);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2lh;
+
+  svg {
+    width: 48px;
+    height: 48px;
+
+    path {
+      stroke-width: 18px;
+      stroke-linecap: round;
+      stroke: currentColor;
+    }
+  }
+
+  .clock {
+    font-size: 10px;
+    letter-spacing: 0.2ch;
+    font-weight: normal;
+    color: hsla(0, 0%, 100%, 0.6);
+    /* font-variant: tabular-nums; */
+    font-weight: 300;
+    font-variant-numeric: slashed-zero;
+  }
 }

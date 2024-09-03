@@ -4,6 +4,7 @@
   --border-radius: 8px;
   --max-height: calc(100vh - 2 * var(--padding));
   color-scheme: light dark;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 html {

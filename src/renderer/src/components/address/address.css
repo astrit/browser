@@ -1,9 +1,11 @@
 .address {
   display: flex;
-  gap: 1ch;
+  align-items: center;
+  gap: 2px;
   border-radius: 8px;
   box-sizing: border-box;
   z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 
   input {
     height: 100%;
@@ -11,65 +13,33 @@
     border: none;
     background-color: rgba(255, 255, 255, 0);
     outline: none;
-    color: #fff;
+    color: hsla(0, 0%, 100%, 0.6);
     box-sizing: border-box;
     flex: 1;
+    font-size: 10px;
+    padding-inline: 1ch;
   }
 
-  nav {
+  button {
     display: flex;
     align-items: center;
-    gap: 2px;
+    justify-content: center;
+    border-radius: 20px;
+    appearance: none;
+    border: none;
+    background: none;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    opacity: 0.4;
 
-    button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 20px;
-      appearance: none;
-      border: none;
-      background: none;
-      width: 28px;
-      height: 28px;
-      cursor: pointer;
-      opacity: 0.4;
-
-      &:hover {
-        opacity: 1;
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-    }
-  }
-
-  .bar {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    border-radius: 40px;
-    /* border: 1px solid rgba(255, 255, 255, 0.1); */
-    width: 100%;
-    gap: 4px;
-    /* padding: 6px; */
-
-    button {
-      border-radius: 200px;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      aspect-ratio: 1/1;
-      background-color: rgba(255, 255, 255, 0.04);
-
-      svg {
-        height: 12px;
-        width: 12px;
-      }
+    &:hover {
+      opacity: 1;
+      background-color: rgba(255, 255, 255, 0.1);
     }
   }
 
   svg {
-    width: 24px;
-    height: 24px;
     fill: none;
     stroke: #fff;
     stroke-width: 2;
