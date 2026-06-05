@@ -1,0 +1,69 @@
+:root {
+  --padding: 10px;
+  --margin: 0;
+  --border-radius: 8px;
+  --max-height: calc(100vh - 2 * var(--padding));
+  color-scheme: light dark;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html {
+  background: transparent;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  box-shadow: inset 0 0 0 2px hsla(0, 0%, 100%, 0.02);
+  border-radius: 12px;
+  color: light-dark(#000, #fff);
+}
+
+body {
+  padding: var(--padding);
+  margin: var(--margin);
+  background: transparent;
+  box-sizing: border-box;
+  min-height: 100vh;
+  min-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding);
+  overflow: hidden;
+  user-select: none;
+  border-radius: 12px;
+  -webkit-app-region: drag;
+}
+
+webview,
+.splash {
+  flex: 1;
+  min-width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+webview {
+  -webkit-app-region: no-drag;
+}
+
+.splash {
+  -webkit-app-region: drag;
+}
+
+#core {
+  display: contents;
+
+  & > *:not(.splash) {
+    -webkit-app-region: no-drag;
+  }
+}
+
+/* #drag {
+  -webkit-app-region: drag;
+}
+
+#no-drag {
+  -webkit-app-region: no-drag;
+} */
