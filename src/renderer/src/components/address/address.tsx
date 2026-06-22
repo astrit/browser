@@ -8,7 +8,8 @@ const AddressBar = ({
   onForward,
   onHome,
   onBookmark,
-  onNewWindow
+  onNewWindow,
+  onSettings
 }: {
   url: string
   setUrl: React.Dispatch<React.SetStateAction<string>>
@@ -17,6 +18,7 @@ const AddressBar = ({
   onHome?: () => void
   onBookmark?: () => void
   onNewWindow?: () => void
+  onSettings?: () => void
 }): JSX.Element => {
   return (
     <nav className="address">
@@ -50,7 +52,7 @@ const AddressBar = ({
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
       </button>
-      <button data-name="settings">
+      <button data-name="settings" onClick={onSettings}>
         <svg
           width="24"
           height="24"

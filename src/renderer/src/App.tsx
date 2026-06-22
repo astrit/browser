@@ -3,11 +3,15 @@ import './assets/styles.css'
 import AddressBar from './components/address/address'
 // import useWindowsDimensions from './hooks/useWindowsDimensions'
 import Splash from './components/splash/splash'
+import Bookmarks from './components/bookmarks/bookmarks'
+import Settings from './components/settings/settings'
 
 function App(): JSX.Element {
   const [url, setUrl] = useState<string>('')
   const [isMetaPressed, setIsMetaPressed] = useState(false)
   const [showBookmarks, setShowBookmarks] = useState(false)
+  const [showSettings, setShowSettings] = useState(false)
+  const [showAddressBar, setShowAddressBar] = useState(true)
   // const windowDimensions = useWindowsDimensions()
   const webviewRef = useRef<HTMLWebViewElement>(null)
 
@@ -37,6 +41,12 @@ function App(): JSX.Element {
     const handleKeyDown = (event: KeyboardEvent): void => {
       if (event.key === 'Meta') {
         setIsMetaPressed(true)
+      }
+
+      // Cmd+L to toggle address bar
+      if ((event.metaKey || event.ctrlKey) && event.key === 'l') {
+        event.preventDefault()
+        setShowAddressBar((prev) => !prev)
       }
     }
 
@@ -74,10 +84,17 @@ function App(): JSX.Element {
   const handleHome = (): void => {
     setUrl('')
     setShowBookmarks(false)
+    setShowSettings(false)
   }
 
   const handleBookmark = (): void => {
     setShowBookmarks(!showBookmarks)
+    setShowSettings(false)
+  }
+
+  const handleSettings = (): void => {
+    setShowSettings(!showSettings)
+    setShowBookmarks(false)
   }
 
   const handleNewWindow = (): void => {
@@ -86,17 +103,20 @@ function App(): JSX.Element {
 
   return (
     <>
-      <AddressBar
-        setUrl={setUrl}
-        url={url}
-        onBack={handleBack}
-        onForward={handleForward}
-        onHome={handleHome}
-        onBookmark={handleBookmark}
-        onNewWindow={handleNewWindow}
-      />
+      {showAddressBar && (
+        <AddressBar
+          setUrl={setUrl}
+          url={url}
+          onBack={handleBack}
+          onForward={handleForward}
+          onHome={handleHome}
+          onBookmark={handleBookmark}
+          onNewWindow={handleNewWindow}
+          onSettings={handleSettings}
+        />
+      )}
       <main
-        className={`content-frame${!url ? ' is-empty' : ''}${showBookmarks ? ' show-bookmarks' : ''}`}
+        className={`content-frame${!url ? ' is-empty' : ''}${showBookmarks || showSettings ? ' show-side-panel' : ''}${!showAddressBar ? ' fullscreen' : ''}`}
       >
         <div className="webview-container">
           {url ? (
@@ -115,12 +135,8 @@ function App(): JSX.Element {
             <Splash />
           )}
         </div>
-        {showBookmarks && (
-          <aside className="bookmarks-panel">
-            <div className="bookmarks-header">Bookmarks</div>
-            <div className="bookmarks-list">{/* Bookmarks will be added here */}</div>
-          </aside>
-        )}
+        {showBookmarks && <Bookmarks />}
+        {showSettings && <Settings />}
       </main>
     </>
   )
