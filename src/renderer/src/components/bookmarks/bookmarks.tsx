@@ -68,7 +68,12 @@ const Bookmarks: React.FC = () => {
       return true
     }
 
-    const haystack = [bookmark.title, bookmark.url, bookmark.description ?? '', bookmark.folder ?? '']
+    const haystack = [
+      bookmark.title,
+      bookmark.url,
+      bookmark.description ?? '',
+      bookmark.folder ?? ''
+    ]
       .join(' ')
       .toLowerCase()
 

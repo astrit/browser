@@ -6,22 +6,30 @@ import Splash from './components/splash/splash'
 import Bookmarks from './components/bookmarks/bookmarks'
 import Settings from './components/settings/settings'
 
+interface ViewPane {
+  id: string
+  url: string
+}
+
 function App(): JSX.Element {
-  const [url, setUrl] = useState<string>('')
+  const [views, setViews] = useState<ViewPane[]>([{ id: 'view-1', url: '' }])
+  const [focusedViewId, setFocusedViewId] = useState<string>('view-1')
   const [isMetaPressed, setIsMetaPressed] = useState(false)
   const [showBookmarks, setShowBookmarks] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showAddressBar, setShowAddressBar] = useState(true)
   // const windowDimensions = useWindowsDimensions()
-  const webviewRef = useRef<HTMLWebViewElement>(null)
+  const webviewRefs = useRef<Record<string, HTMLWebViewElement | null>>({})
+
+  const focusedIndex = Math.max(
+    0,
+    views.findIndex((view) => view.id === focusedViewId)
+  )
+  const focusedView = views[focusedIndex] ?? views[0]
+  const activeUrl = focusedView?.url ?? ''
+  const isAllViewsEmpty = views.every((view) => !view.url)
 
   useEffect(() => {
-    const webview = webviewRef.current
-
-    if (!webview) {
-      return
-    }
-
     const handleIpcMessage = (event: Event): void => {
       const { channel, args } = event as Event & { channel?: string; args?: unknown[] }
 
@@ -34,12 +42,20 @@ function App(): JSX.Element {
       }
     }
 
-    webview.addEventListener('ipc-message', handleIpcMessage)
+    const attachedWebviews = views
+      .map((view) => webviewRefs.current[view.id])
+      .filter((webview): webview is HTMLWebViewElement => Boolean(webview))
+
+    attachedWebviews.forEach((webview) => {
+      webview.addEventListener('ipc-message', handleIpcMessage)
+    })
 
     return () => {
-      webview.removeEventListener('ipc-message', handleIpcMessage)
+      attachedWebviews.forEach((webview) => {
+        webview.removeEventListener('ipc-message', handleIpcMessage)
+      })
     }
-  }, [url])
+  }, [views])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
@@ -76,17 +92,28 @@ function App(): JSX.Element {
   }, [])
 
   const handleBack = (): void => {
-    const webview = webviewRef.current as unknown as { goBack: () => void }
+    const webview = webviewRefs.current[focusedViewId] as unknown as { goBack: () => void }
     webview?.goBack?.()
   }
 
   const handleForward = (): void => {
-    const webview = webviewRef.current as unknown as { goForward: () => void }
+    const webview = webviewRefs.current[focusedViewId] as unknown as { goForward: () => void }
     webview?.goForward?.()
   }
 
   const handleHome = (): void => {
-    setUrl('')
+    setViews((prevViews) =>
+      prevViews.map((view) => {
+        if (view.id !== focusedViewId) {
+          return view
+        }
+
+        return {
+          ...view,
+          url: ''
+        }
+      })
+    )
     setShowBookmarks(false)
     setShowSettings(false)
   }
@@ -105,12 +132,50 @@ function App(): JSX.Element {
     window.api.newWindow()
   }
 
+  const setFocusedUrl: React.Dispatch<React.SetStateAction<string>> = (nextUrl) => {
+    setViews((prevViews) => {
+      const currentFocusedUrl = prevViews.find((view) => view.id === focusedViewId)?.url ?? ''
+      const resolvedUrl = typeof nextUrl === 'function' ? nextUrl(currentFocusedUrl) : nextUrl
+
+      return prevViews.map((view) => {
+        if (view.id !== focusedViewId) {
+          return view
+        }
+
+        return {
+          ...view,
+          url: resolvedUrl
+        }
+      })
+    })
+  }
+
+  const handleAddView = (side: 'left' | 'right'): void => {
+    if (views.length > 1) {
+      return
+    }
+
+    const newView: ViewPane = {
+      id: `view-${Date.now()}`,
+      url: ''
+    }
+
+    setViews((prevViews) => {
+      if (side === 'left') {
+        return [newView, ...prevViews]
+      }
+
+      return [...prevViews, newView]
+    })
+    setFocusedViewId(newView.id)
+  }
+
   return (
     <>
       {showAddressBar && (
         <AddressBar
-          setUrl={setUrl}
-          url={url}
+          setUrl={setFocusedUrl}
+          url={activeUrl}
           onBack={handleBack}
           onForward={handleForward}
           onHome={handleHome}
@@ -120,25 +185,64 @@ function App(): JSX.Element {
         />
       )}
       <main
-        className={`content-frame${!url ? ' is-empty' : ''}${showBookmarks || showSettings ? ' show-side-panel' : ''}${!showAddressBar ? ' fullscreen' : ''}`}
+        className={`content-frame${isAllViewsEmpty ? ' is-empty' : ''}${showBookmarks || showSettings ? ' show-side-panel' : ''}${!showAddressBar ? ' fullscreen' : ''}`}
       >
-        <div className="webview-container">
-          {url ? (
+        <section
+          className="webview-container"
+        >
+          <div className={`webview-split${views.length > 1 ? ' is-multi' : ''}`}>
+            {views.map((view) => {
+              return (
+                <div
+                  key={view.id}
+                  className="webview-pane"
+                  onMouseDown={() => setFocusedViewId(view.id)}
+                >
+                  {view.url ? (
+                    <>
+                      <webview
+                        className={isMetaPressed ? 'is-drag-ready' : ''}
+                        ref={(element) => {
+                          webviewRefs.current[view.id] = element
+                        }}
+                        src={`${view.url.includes('https://') ? '' : 'https://'}${view.url}`}
+                        onFocus={() => setFocusedViewId(view.id)}
+                        onMouseEnter={() => setFocusedViewId(view.id)}
+                      />
+                      <div
+                        aria-hidden="true"
+                        className={`drag-layer${isMetaPressed ? ' is-active' : ''}`}
+                      />
+                    </>
+                  ) : (
+                    <div onMouseDown={() => setFocusedViewId(view.id)}>
+                      <Splash />
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+
+          {views.length === 1 && (
             <>
-              <webview
-                className={isMetaPressed ? 'is-drag-ready' : ''}
-                ref={webviewRef}
-                src={`${url.includes('https://') ? '' : 'https://'}${url}`}
-              />
-              <div
-                aria-hidden="true"
-                className={`drag-layer${isMetaPressed ? ' is-active' : ''}`}
-              />
+              <div className="view-insert-hotspot is-left">
+                <button
+                  className="view-insert-handle"
+                  onClick={() => handleAddView('left')}
+                  type="button"
+                />
+              </div>
+              <div className="view-insert-hotspot is-right">
+                <button
+                  className="view-insert-handle"
+                  onClick={() => handleAddView('right')}
+                  type="button"
+                />
+              </div>
             </>
-          ) : (
-            <Splash />
           )}
-        </div>
+        </section>
         {showBookmarks && <Bookmarks />}
         {showSettings && <Settings />}
       </main>
