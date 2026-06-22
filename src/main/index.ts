@@ -5,6 +5,22 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 // import { BrowserWindow } from 'electron-acrylic-window';
 import icon from '../../512x512.png?asset'
 
+const applyTransparencyMode = (targetWindow: BrowserWindow, enabled: boolean): void => {
+  if (process.platform === 'darwin') {
+    targetWindow.setVibrancy(enabled ? null : 'fullscreen-ui')
+  }
+
+  if (process.platform === 'win32') {
+    const withMaterial = targetWindow as unknown as {
+      setBackgroundMaterial?: (material: 'none' | 'acrylic') => void
+    }
+
+    withMaterial.setBackgroundMaterial?.(enabled ? 'none' : 'acrylic')
+  }
+
+  targetWindow.setBackgroundColor('#00000000')
+}
+
 function createWindow(): BrowserWindow {
   // Create the browser window.
   const newWindow = new BrowserWindow({
@@ -74,6 +90,16 @@ app.whenReady().then(() => {
   // Handle new window requests
   ipcMain.on('new-window', () => {
     createWindow()
+  })
+
+  ipcMain.on('set-transparency-mode', (_event, enabled: boolean) => {
+    const senderWindow = BrowserWindow.fromWebContents(_event.sender)
+
+    if (!senderWindow) {
+      return
+    }
+
+    applyTransparencyMode(senderWindow, enabled)
   })
 
   createWindow()

@@ -57,3 +57,9 @@
     stroke-linejoin: round;
   }
 }
+
+body.full-transparent .address input:focus {
+  background-color: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+}

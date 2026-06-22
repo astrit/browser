@@ -5,6 +5,9 @@ import { electronAPI } from '@electron-toolkit/preload'
 const api = {
   newWindow: (): void => {
     ipcRenderer.send('new-window')
+  },
+  setTransparencyMode: (enabled: boolean): void => {
+    ipcRenderer.send('set-transparency-mode', enabled)
   }
 }
 

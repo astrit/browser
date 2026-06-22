@@ -1,5 +1,6 @@
 import React from 'react'
 import './settings.css'
+import Toggle from '../toggle/toggle'
 
 interface Shortcut {
   id: string
@@ -44,10 +45,19 @@ const dummyShortcuts: Shortcut[] = [
     name: 'New Window',
     description: 'Open a new browser window',
     keys: 'Cmd+N'
+  },
+  {
+    id: '7',
+    name: 'Toggle Transparency',
+    description: 'Enable or disable fully transparent browser mode',
+    keys: 'Ctrl+T'
   }
 ]
 
-const Settings: React.FC = () => {
+const Settings: React.FC<{
+  isFullyTransparent: boolean
+  onTransparencyToggle: () => void
+}> = ({ isFullyTransparent, onTransparencyToggle }) => {
   const [searchQuery, setSearchQuery] = React.useState('')
   const [editingId, setEditingId] = React.useState<string | null>(null)
 
@@ -90,6 +100,19 @@ const Settings: React.FC = () => {
         />
       </div>
       <div className="panel-content">
+        <div className="settings-section">
+          <h3 className="section-title">Appearance</h3>
+          <Toggle
+            checked={isFullyTransparent}
+            label="Full Transparency"
+            onChange={onTransparencyToggle}
+          />
+          <p className="settings-helper-text">
+            This mode removes frosted glass effects and panel fills for a fully clear browser
+            chrome.
+          </p>
+        </div>
+
         {filteredShortcuts.length > 0 && (
           <div className="settings-section">
             <h3 className="section-title">Keyboard Shortcuts</h3>

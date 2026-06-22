@@ -223,6 +223,50 @@ webview.is-drag-ready {
   -webkit-app-region: no-drag;
 }
 
+html.full-transparent {
+  box-shadow: none;
+}
+
+body.full-transparent {
+  background: transparent;
+}
+
+body.full-transparent * {
+  box-shadow: none !important;
+}
+
+body.full-transparent .content-frame,
+body.full-transparent .webview-split,
+body.full-transparent .webview-pane {
+  background: transparent;
+}
+
+body.full-transparent .bookmarks-panel,
+body.full-transparent .settings-panel,
+body.full-transparent .panel-header,
+body.full-transparent .bookmark-search-wrap,
+body.full-transparent .settings-search-wrap,
+body.full-transparent .settings-section {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border-color: transparent !important;
+}
+
+body.full-transparent .bookmark-search-input,
+body.full-transparent .settings-search-input,
+body.full-transparent .shortcut-keys,
+body.full-transparent .info-row,
+body.full-transparent .toggle-switch,
+body.full-transparent .toggle-track,
+body.full-transparent .folder-toggle:hover,
+body.full-transparent .bookmark-item:hover,
+body.full-transparent .shortcut-item:hover,
+body.full-transparent .info-row:hover {
+  background: transparent !important;
+  border-color: transparent !important;
+  backdrop-filter: none !important;
+}
+
 /* #drag {
   -webkit-app-region: drag;
 }

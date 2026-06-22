@@ -14,6 +14,7 @@ interface ViewPane {
 function App(): JSX.Element {
   const [views, setViews] = useState<ViewPane[]>([{ id: 'view-1', url: '' }])
   const [focusedViewId, setFocusedViewId] = useState<string>('view-1')
+  const [isFullyTransparent, setIsFullyTransparent] = useState(false)
   const [isMetaPressed, setIsMetaPressed] = useState(false)
   const [showBookmarks, setShowBookmarks] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
@@ -28,6 +29,18 @@ function App(): JSX.Element {
   const focusedView = views[focusedIndex] ?? views[0]
   const activeUrl = focusedView?.url ?? ''
   const isAllViewsEmpty = views.every((view) => !view.url)
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('full-transparent', isFullyTransparent)
+    document.body.classList.toggle('full-transparent', isFullyTransparent)
+    window.api.setTransparencyMode(isFullyTransparent)
+
+    return () => {
+      document.documentElement.classList.remove('full-transparent')
+      document.body.classList.remove('full-transparent')
+      window.api.setTransparencyMode(false)
+    }
+  }, [isFullyTransparent])
 
   useEffect(() => {
     const handleIpcMessage = (event: Event): void => {
@@ -67,6 +80,12 @@ function App(): JSX.Element {
       if ((event.metaKey || event.ctrlKey) && event.key === 'l') {
         event.preventDefault()
         setShowAddressBar((prev) => !prev)
+      }
+
+      // Ctrl+T to toggle full transparency
+      if (event.ctrlKey && event.key.toLowerCase() === 't') {
+        event.preventDefault()
+        setIsFullyTransparent((prev) => !prev)
       }
     }
 
@@ -132,6 +151,10 @@ function App(): JSX.Element {
     window.api.newWindow()
   }
 
+  const handleTransparencyToggle = (): void => {
+    setIsFullyTransparent((prev) => !prev)
+  }
+
   const setFocusedUrl: React.Dispatch<React.SetStateAction<string>> = (nextUrl) => {
     setViews((prevViews) => {
       const currentFocusedUrl = prevViews.find((view) => view.id === focusedViewId)?.url ?? ''
@@ -187,9 +210,7 @@ function App(): JSX.Element {
       <main
         className={`content-frame${isAllViewsEmpty ? ' is-empty' : ''}${showBookmarks || showSettings ? ' show-side-panel' : ''}${!showAddressBar ? ' fullscreen' : ''}`}
       >
-        <section
-          className="webview-container"
-        >
+        <section className="webview-container">
           <div className={`webview-split${views.length > 1 ? ' is-multi' : ''}`}>
             {views.map((view) => {
               return (
@@ -244,7 +265,12 @@ function App(): JSX.Element {
           )}
         </section>
         {showBookmarks && <Bookmarks />}
-        {showSettings && <Settings />}
+        {showSettings && (
+          <Settings
+            isFullyTransparent={isFullyTransparent}
+            onTransparencyToggle={handleTransparencyToggle}
+          />
+        )}
       </main>
     </>
   )
