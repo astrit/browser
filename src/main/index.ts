@@ -5,9 +5,9 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 // import { BrowserWindow } from 'electron-acrylic-window';
 import icon from '../../512x512.png?asset'
 
-function createWindow(): void {
+function createWindow(): BrowserWindow {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  const newWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
@@ -30,26 +30,28 @@ function createWindow(): void {
     frame: false
   })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+  newWindow.on('ready-to-show', () => {
+    newWindow.show()
   })
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
+  newWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
 
-  mainWindow.webContents.on('will-attach-webview', (_event, webPreferences) => {
+  newWindow.webContents.on('will-attach-webview', (_event, webPreferences) => {
     webPreferences.preload = join(__dirname, '../preload/webview.js')
   })
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    newWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    newWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  return newWindow
 }
 
 // This method will be called when Electron has finished
@@ -69,12 +71,19 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
+  // Handle new window requests
+  ipcMain.on('new-window', () => {
+    createWindow()
+  })
+
   createWindow()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    }
   })
 })
 

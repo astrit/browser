@@ -7,10 +7,9 @@ import Splash from './components/splash/splash'
 function App(): JSX.Element {
   const [url, setUrl] = useState<string>('')
   const [isMetaPressed, setIsMetaPressed] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [showBookmarks, setShowBookmarks] = useState(false)
   // const windowDimensions = useWindowsDimensions()
   const webviewRef = useRef<HTMLWebViewElement>(null)
-  const loadingTimeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
     const webview = webviewRef.current
@@ -27,20 +26,10 @@ function App(): JSX.Element {
       }
     }
 
-    const handleDidStopLoading = (): void => {
-      setIsLoading(false)
-      if (loadingTimeoutRef.current) {
-        clearTimeout(loadingTimeoutRef.current)
-        loadingTimeoutRef.current = null
-      }
-    }
-
     webview.addEventListener('ipc-message', handleIpcMessage)
-    webview.addEventListener('did-stop-loading', handleDidStopLoading)
 
     return () => {
       webview.removeEventListener('ipc-message', handleIpcMessage)
-      webview.removeEventListener('did-stop-loading', handleDidStopLoading)
     }
   }, [url])
 
@@ -72,33 +61,65 @@ function App(): JSX.Element {
     }
   }, [])
 
-  const handleKeystroke = (): void => {
-    if (url) {
-      setIsLoading(true)
-      if (loadingTimeoutRef.current) {
-        clearTimeout(loadingTimeoutRef.current)
-      }
-      loadingTimeoutRef.current = window.setTimeout(() => {
-        setIsLoading(false)
-      }, 3000)
-    }
+  const handleBack = (): void => {
+    const webview = webviewRef.current as unknown as { goBack: () => void }
+    webview?.goBack?.()
+  }
+
+  const handleForward = (): void => {
+    const webview = webviewRef.current as unknown as { goForward: () => void }
+    webview?.goForward?.()
+  }
+
+  const handleHome = (): void => {
+    setUrl('')
+    setShowBookmarks(false)
+  }
+
+  const handleBookmark = (): void => {
+    setShowBookmarks(!showBookmarks)
+  }
+
+  const handleNewWindow = (): void => {
+    window.api.newWindow()
   }
 
   return (
     <>
-      <AddressBar setUrl={setUrl} url={url} onKeystroke={handleKeystroke} />
-      <main className={`content-frame${!url ? ' is-empty' : ''}`}>
-        {url ? (
-          <>
-            <webview
-              className={isMetaPressed ? 'is-drag-ready' : ''}
-              ref={webviewRef}
-              src={`${url.includes('https://') ? '' : 'https://'}${url}`}
-            />
-            <div aria-hidden="true" className={`drag-layer${isMetaPressed ? ' is-active' : ''}`} />
-          </>
-        ) : (
-          <Splash isLoading={isLoading} />
+      <AddressBar
+        setUrl={setUrl}
+        url={url}
+        onBack={handleBack}
+        onForward={handleForward}
+        onHome={handleHome}
+        onBookmark={handleBookmark}
+        onNewWindow={handleNewWindow}
+      />
+      <main
+        className={`content-frame${!url ? ' is-empty' : ''}${showBookmarks ? ' show-bookmarks' : ''}`}
+      >
+        <div className="webview-container">
+          {url ? (
+            <>
+              <webview
+                className={isMetaPressed ? 'is-drag-ready' : ''}
+                ref={webviewRef}
+                src={`${url.includes('https://') ? '' : 'https://'}${url}`}
+              />
+              <div
+                aria-hidden="true"
+                className={`drag-layer${isMetaPressed ? ' is-active' : ''}`}
+              />
+            </>
+          ) : (
+            <Splash />
+          )}
+        </div>
+        {showBookmarks && (
+          <aside className="bookmarks-panel">
+            <div className="bookmarks-header">Bookmarks</div>
+            <div className="bookmarks-list">{/* Bookmarks will be added here */}</div>
+          </aside>
         )}
       </main>
     </>

@@ -73,6 +73,44 @@ webview {
   -webkit-app-region: no-drag;
 }
 
+.webview-container {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  -webkit-app-region: no-drag;
+}
+
+.content-frame.show-bookmarks .webview-container {
+  flex: 0 0 70%;
+}
+
+.bookmarks-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 30%;
+  min-height: 0;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  -webkit-app-region: no-drag;
+}
+
+.bookmarks-header {
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  -webkit-app-region: no-drag;
+}
+
+.bookmarks-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+  -webkit-app-region: no-drag;
+}
+
 webview.is-drag-ready {
   pointer-events: none;
 }
