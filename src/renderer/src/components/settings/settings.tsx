@@ -48,44 +48,86 @@ const dummyShortcuts: Shortcut[] = [
 ]
 
 const Settings: React.FC = () => {
+  const [searchQuery, setSearchQuery] = React.useState('')
   const [editingId, setEditingId] = React.useState<string | null>(null)
+
+  const normalizedSearch = searchQuery.trim().toLowerCase()
+
+  const filteredShortcuts = dummyShortcuts.filter((shortcut) => {
+    if (!normalizedSearch) {
+      return true
+    }
+
+    return [shortcut.name, shortcut.description, shortcut.keys]
+      .join(' ')
+      .toLowerCase()
+      .includes(normalizedSearch)
+  })
+
+  const aboutItems = [
+    { label: 'Version', value: '1.0.0' },
+    { label: 'Electron', value: '28.2.0' }
+  ]
+
+  const filteredAboutItems = aboutItems.filter((item) => {
+    if (!normalizedSearch) {
+      return true
+    }
+
+    return `${item.label} ${item.value}`.toLowerCase().includes(normalizedSearch)
+  })
 
   return (
     <aside className="settings-panel">
       <div className="panel-header">Settings</div>
+      <div className="settings-search-wrap">
+        <input
+          className="settings-search-input"
+          type="text"
+          placeholder="Search settings"
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+        />
+      </div>
       <div className="panel-content">
-        <div className="settings-section">
-          <h3 className="section-title">Keyboard Shortcuts</h3>
-          <div className="shortcuts-list">
-            {dummyShortcuts.map((shortcut) => (
-              <div
-                key={shortcut.id}
-                className={`shortcut-item${editingId === shortcut.id ? ' editing' : ''}`}
-                onDoubleClick={() => setEditingId(shortcut.id)}
-              >
-                <div className="shortcut-info">
-                  <div className="shortcut-name">{shortcut.name}</div>
-                  <div className="shortcut-description">{shortcut.description}</div>
+        {filteredShortcuts.length > 0 && (
+          <div className="settings-section">
+            <h3 className="section-title">Keyboard Shortcuts</h3>
+            <div className="shortcuts-list">
+              {filteredShortcuts.map((shortcut) => (
+                <div
+                  key={shortcut.id}
+                  className={`shortcut-item${editingId === shortcut.id ? ' editing' : ''}`}
+                  onDoubleClick={() => setEditingId(shortcut.id)}
+                >
+                  <div className="shortcut-info">
+                    <div className="shortcut-name">{shortcut.name}</div>
+                    <div className="shortcut-description">{shortcut.description}</div>
+                  </div>
+                  <div className="shortcut-keys">{shortcut.keys}</div>
                 </div>
-                <div className="shortcut-keys">{shortcut.keys}</div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="settings-section">
-          <h3 className="section-title">About</h3>
-          <div className="about-info">
-            <div className="info-row">
-              <span className="info-label">Version</span>
-              <span className="info-value">1.0.0</span>
-            </div>
-            <div className="info-row">
-              <span className="info-label">Electron</span>
-              <span className="info-value">28.2.0</span>
+        {filteredAboutItems.length > 0 && (
+          <div className="settings-section">
+            <h3 className="section-title">About</h3>
+            <div className="about-info">
+              {filteredAboutItems.map((item) => (
+                <div className="info-row" key={item.label}>
+                  <span className="info-label">{item.label}</span>
+                  <span className="info-value">{item.value}</span>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        )}
+
+        {filteredShortcuts.length === 0 && filteredAboutItems.length === 0 && (
+          <div className="settings-empty-state">No settings match your search.</div>
+        )}
       </div>
     </aside>
   )

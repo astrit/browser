@@ -28,6 +28,10 @@ function App(): JSX.Element {
       if (channel === 'meta-key-state') {
         setIsMetaPressed(Boolean(args?.[0]))
       }
+
+      if (channel === 'toggle-address-bar') {
+        setShowAddressBar((prev) => !prev)
+      }
     }
 
     webview.addEventListener('ipc-message', handleIpcMessage)

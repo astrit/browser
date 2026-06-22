@@ -46,6 +46,7 @@ const dummyBookmarks: Bookmark[] = [
 ]
 
 const Bookmarks: React.FC = () => {
+  const [searchQuery, setSearchQuery] = React.useState('')
   const [expandedFolders, setExpandedFolders] = React.useState<Set<string>>(
     new Set(['Development', 'Reference', 'Entertainment'])
   )
@@ -60,7 +61,21 @@ const Bookmarks: React.FC = () => {
     setExpandedFolders(newExpanded)
   }
 
-  const groupedBookmarks = dummyBookmarks.reduce(
+  const normalizedSearch = searchQuery.trim().toLowerCase()
+
+  const filteredBookmarks = dummyBookmarks.filter((bookmark) => {
+    if (!normalizedSearch) {
+      return true
+    }
+
+    const haystack = [bookmark.title, bookmark.url, bookmark.description ?? '', bookmark.folder ?? '']
+      .join(' ')
+      .toLowerCase()
+
+    return haystack.includes(normalizedSearch)
+  })
+
+  const groupedBookmarks = filteredBookmarks.reduce(
     (acc, bookmark) => {
       const folder = bookmark.folder || 'Uncategorized'
       if (!acc[folder]) {
@@ -75,7 +90,19 @@ const Bookmarks: React.FC = () => {
   return (
     <aside className="bookmarks-panel">
       <div className="panel-header">Bookmarks</div>
+      <div className="bookmark-search-wrap">
+        <input
+          className="bookmark-search-input"
+          type="text"
+          placeholder="Search bookmarks"
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+        />
+      </div>
       <div className="panel-content">
+        {Object.entries(groupedBookmarks).length === 0 && (
+          <div className="bookmark-empty-state">No bookmarks match your search.</div>
+        )}
         {Object.entries(groupedBookmarks).map(([folder, bookmarks]) => (
           <div key={folder} className="bookmark-folder">
             <button className="folder-toggle" onClick={() => toggleFolder(folder)}>

@@ -2,6 +2,7 @@
   --padding: 10px;
   --margin: 0;
   --border-radius: 8px;
+  --sidebar-width: clamp(400px, 30vw, 520px);
   --max-height: calc(100vh - 2 * var(--padding));
   color-scheme: light dark;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -44,14 +45,14 @@ body {
 }
 
 nav.address {
-  animation: slideInDown 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: slideInDown 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
   flex-shrink: 0;
 }
 
 @keyframes slideInDown {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-5px);
   }
   to {
     opacity: 1;
@@ -63,8 +64,9 @@ webview,
 .splash {
   flex: 1;
   min-height: 0;
-  min-width: 100%;
+  min-width: 0;
   height: 100%;
+  width: 100%;
   border-radius: var(--border-radius);
   overflow: hidden;
   box-sizing: border-box;
@@ -80,11 +82,13 @@ webview {
 
 .content-frame {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   flex: 1;
   min-height: 0;
   -webkit-app-region: no-drag;
   gap: var(--padding);
+  transition: grid-template-columns 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .content-frame.fullscreen {
@@ -100,20 +104,23 @@ webview {
 .webview-container {
   position: relative;
   display: flex;
-  flex: 1;
   min-height: 0;
+  min-width: 0;
   -webkit-app-region: no-drag;
-  transition: flex 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .content-frame.show-side-panel .webview-container {
-  flex: 0 0 70%;
+  min-width: 0;
+}
+
+.content-frame.show-side-panel {
+  grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
 }
 
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(4px);
   }
   to {
     opacity: 1;

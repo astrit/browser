@@ -8,6 +8,12 @@ window.addEventListener('keydown', (event) => {
   if (event.key === 'Meta' || event.metaKey) {
     sendMetaKeyState(true)
   }
+
+  // Send Cmd+L to host renderer to toggle address bar
+  if ((event.metaKey || event.ctrlKey) && event.key === 'l') {
+    event.preventDefault()
+    ipcRenderer.sendToHost('toggle-address-bar')
+  }
 })
 
 window.addEventListener('keyup', (event) => {
