@@ -21,7 +21,7 @@ const AddressBar = ({
         </svg>
       </button>
 
-      <button>
+      <button data-name="home">
         <svg width="12" height="12" viewBox="0 0 24 24">
           <path d="M12.0001 4L12.0001 8" />
           <path d="M9 14L4.08509 17.4415" />

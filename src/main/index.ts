@@ -39,15 +39,8 @@ function createWindow(): void {
     return { action: 'deny' }
   })
 
-  // Listen for Cmd + K shortcut
-  // Listen for Cmd + K shortcut
-  // Listen for Cmd + K shortcut
-  // Listen for Cmd + K shortcut
-  mainWindow.webContents.on('before-input-event', (event, input) => {
-    if (input.meta && input.key.toLowerCase() === 'k') {
-      event.preventDefault()
-      mainWindow.webContents.send('toggle-address-bar')
-    }
+  mainWindow.webContents.on('will-attach-webview', (_event, webPreferences) => {
+    webPreferences.preload = join(__dirname, '../preload/webview.js')
   })
 
   // HMR for renderer base on electron-vite cli.

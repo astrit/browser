@@ -1,11 +1,25 @@
+@font-face {
+  font-family: 'T26';
+  src: url('../../fonts/t26-normal.woff') format('woff');
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'T26';
+  src: url('../../fonts/t26-bold.woff') format('woff');
+  font-style: normal;
+  font-weight: 700;
+}
+
 .splash {
-  font-family: sans-serif;
   background-color: hsla(0, 0%, 100%, 0);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2lh;
+  -webkit-app-region: drag;
 
   svg {
     width: 48px;
@@ -19,12 +33,12 @@
   }
 
   .clock {
+    font-family: 'T26', sans-serif;
     font-size: 10px;
     letter-spacing: 0.2ch;
     font-weight: normal;
     color: hsla(0, 0%, 100%, 0.6);
-    /* font-variant: tabular-nums; */
     font-weight: 300;
-    font-variant-numeric: slashed-zero;
+    font-variant-numeric: tabular-nums slashed-zero;
   }
 }
