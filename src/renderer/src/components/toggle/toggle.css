@@ -10,7 +10,9 @@
   justify-content: space-between;
   padding: 0 10px 0 12px;
   cursor: pointer;
-  transition: background 180ms ease, border-color 180ms ease;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease;
 }
 
 .toggle-switch:hover {

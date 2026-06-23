@@ -55,9 +55,20 @@ const dummyShortcuts: Shortcut[] = [
 ]
 
 const Settings: React.FC<{
+  closeToMenuBar: boolean
   isFullyTransparent: boolean
+  menuBarVisible: boolean
+  onCloseToMenuBarToggle: () => void
+  onMenuBarVisibleToggle: () => void
   onTransparencyToggle: () => void
-}> = ({ isFullyTransparent, onTransparencyToggle }) => {
+}> = ({
+  closeToMenuBar,
+  isFullyTransparent,
+  menuBarVisible,
+  onCloseToMenuBarToggle,
+  onMenuBarVisibleToggle,
+  onTransparencyToggle
+}) => {
   const [searchQuery, setSearchQuery] = React.useState('')
   const [editingId, setEditingId] = React.useState<string | null>(null)
 
@@ -110,6 +121,23 @@ const Settings: React.FC<{
           <p className="settings-helper-text">
             This mode removes frosted glass effects and panel fills for a fully clear browser
             chrome.
+          </p>
+        </div>
+
+        <div className="settings-section">
+          <h3 className="section-title">Menu Bar</h3>
+          <Toggle checked={menuBarVisible} label="Show Menu Bar Item" onChange={onMenuBarVisibleToggle} />
+          <p className="settings-helper-text">
+            Show or hide this app in the macOS menu bar.
+          </p>
+          <Toggle
+            checked={closeToMenuBar}
+            label="Keep Running In Menu Bar"
+            onChange={onCloseToMenuBarToggle}
+          />
+          <p className="settings-helper-text">
+            Closing the window hides it to the menu bar and keeps the app alive. Quit from the
+            menu bar menu to exit fully.
           </p>
         </div>
 

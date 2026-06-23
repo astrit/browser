@@ -3,6 +3,13 @@ import { ElectronAPI } from '@electron-toolkit/preload'
 interface CoreAPI {
   newWindow: () => void
   setTransparencyMode: (enabled: boolean) => void
+  setCloseToMenuBar: (enabled: boolean) => void
+  setMenuBarVisible: (enabled: boolean) => void
+  getAppPreferences: () => Promise<{ closeToMenuBar: boolean; menuBarVisible: boolean }>
+  onOpenSettings: (callback: () => void) => () => void
+  onAppPreferences: (
+    callback: (preferences: { closeToMenuBar: boolean; menuBarVisible: boolean }) => void
+  ) => () => void
 }
 
 declare global {

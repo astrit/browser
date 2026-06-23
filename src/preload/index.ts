@@ -8,6 +8,37 @@ const api = {
   },
   setTransparencyMode: (enabled: boolean): void => {
     ipcRenderer.send('set-transparency-mode', enabled)
+  },
+  setCloseToMenuBar: (enabled: boolean): void => {
+    ipcRenderer.send('set-close-to-menubar', enabled)
+  },
+  setMenuBarVisible: (enabled: boolean): void => {
+    ipcRenderer.send('set-menubar-visible', enabled)
+  },
+  getAppPreferences: async (): Promise<{ closeToMenuBar: boolean; menuBarVisible: boolean }> => {
+    const preferences = await ipcRenderer.invoke('get-app-preferences')
+    return preferences as { closeToMenuBar: boolean; menuBarVisible: boolean }
+  },
+  onOpenSettings: (callback: () => void): (() => void) => {
+    const listener = (): void => callback()
+    ipcRenderer.on('open-settings', listener)
+
+    return () => {
+      ipcRenderer.removeListener('open-settings', listener)
+    }
+  },
+  onAppPreferences: (
+    callback: (preferences: { closeToMenuBar: boolean; menuBarVisible: boolean }) => void
+  ): (() => void) => {
+    const listener = (_event: Electron.IpcRendererEvent, preferences: unknown): void => {
+      callback(preferences as { closeToMenuBar: boolean; menuBarVisible: boolean })
+    }
+
+    ipcRenderer.on('app-preferences', listener)
+
+    return () => {
+      ipcRenderer.removeListener('app-preferences', listener)
+    }
   }
 }
 

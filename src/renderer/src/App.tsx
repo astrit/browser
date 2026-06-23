@@ -19,6 +19,9 @@ function App(): JSX.Element {
   const [showBookmarks, setShowBookmarks] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
   const [showAddressBar, setShowAddressBar] = useState(true)
+  const [closeToMenuBar, setCloseToMenuBar] = useState(false)
+  const [menuBarVisible, setMenuBarVisible] = useState(true)
+  const [preferencesReady, setPreferencesReady] = useState(false)
   // const windowDimensions = useWindowsDimensions()
   const webviewRefs = useRef<Record<string, HTMLWebViewElement | null>>({})
 
@@ -29,6 +32,40 @@ function App(): JSX.Element {
   const focusedView = views[focusedIndex] ?? views[0]
   const activeUrl = focusedView?.url ?? ''
   const isAllViewsEmpty = views.every((view) => !view.url)
+
+  useEffect(() => {
+    window.api.getAppPreferences().then((preferences) => {
+      setCloseToMenuBar(preferences.closeToMenuBar)
+      setMenuBarVisible(preferences.menuBarVisible)
+      setPreferencesReady(true)
+    })
+
+    const unsubscribe = window.api.onAppPreferences((preferences) => {
+      setCloseToMenuBar(preferences.closeToMenuBar)
+      setMenuBarVisible(preferences.menuBarVisible)
+      setPreferencesReady(true)
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!preferencesReady) {
+      return
+    }
+
+    window.api.setCloseToMenuBar(closeToMenuBar)
+  }, [closeToMenuBar, preferencesReady])
+
+  useEffect(() => {
+    if (!preferencesReady) {
+      return
+    }
+
+    window.api.setMenuBarVisible(menuBarVisible)
+  }, [menuBarVisible, preferencesReady])
 
   useEffect(() => {
     document.documentElement.classList.toggle('full-transparent', isFullyTransparent)
@@ -69,6 +106,17 @@ function App(): JSX.Element {
       })
     }
   }, [views])
+
+  useEffect(() => {
+    const unsubscribe = window.api.onOpenSettings(() => {
+      setShowSettings(true)
+      setShowBookmarks(false)
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
@@ -267,7 +315,11 @@ function App(): JSX.Element {
         {showBookmarks && <Bookmarks />}
         {showSettings && (
           <Settings
+            closeToMenuBar={closeToMenuBar}
             isFullyTransparent={isFullyTransparent}
+            menuBarVisible={menuBarVisible}
+            onCloseToMenuBarToggle={() => setCloseToMenuBar((prev) => !prev)}
+            onMenuBarVisibleToggle={() => setMenuBarVisible((prev) => !prev)}
             onTransparencyToggle={handleTransparencyToggle}
           />
         )}
