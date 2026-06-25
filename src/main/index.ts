@@ -1,14 +1,35 @@
 // import { app, shell, ipcMain } from 'electron'
-import { app, shell, BrowserWindow, ipcMain, Menu, Tray, nativeImage } from 'electron'
+import {
+  app,
+  shell,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  Tray,
+  nativeImage,
+  globalShortcut,
+  screen
+} from 'electron'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 // import { BrowserWindow } from 'electron-acrylic-window';
 import icon from '../../512x512.png?asset'
 
 let mainWindow: BrowserWindow | null = null
+let notesWindow: BrowserWindow | null = null
 let menuBarTray: Tray | null = null
 let clockTimer: NodeJS.Timeout | null = null
 let isQuitting = false
+const notesShortcut = 'Control+Space'
+const notesWindowStatePath = join(app.getPath('userData'), 'notes-window-state.json')
+
+type WindowBoundsState = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 
 const appPreferences = {
   closeToMenuBar: false,
@@ -63,6 +84,139 @@ const focusMainWindow = (): void => {
   if (process.platform === 'darwin' && appPreferences.closeToMenuBar) {
     app.dock.show()
   }
+}
+
+const loadNotesWindowState = (): WindowBoundsState | null => {
+  try {
+    if (!existsSync(notesWindowStatePath)) {
+      return null
+    }
+
+    const raw = readFileSync(notesWindowStatePath, 'utf-8')
+    const parsed = JSON.parse(raw) as Partial<WindowBoundsState>
+
+    if (
+      typeof parsed.x !== 'number' ||
+      typeof parsed.y !== 'number' ||
+      typeof parsed.width !== 'number' ||
+      typeof parsed.height !== 'number'
+    ) {
+      return null
+    }
+
+    return {
+      x: parsed.x,
+      y: parsed.y,
+      width: parsed.width,
+      height: parsed.height
+    }
+  } catch {
+    return null
+  }
+}
+
+const saveNotesWindowState = (targetWindow: BrowserWindow): void => {
+  if (targetWindow.isDestroyed() || targetWindow.isMinimized() || targetWindow.isMaximized()) {
+    return
+  }
+
+  try {
+    const bounds = targetWindow.getBounds()
+    writeFileSync(notesWindowStatePath, JSON.stringify(bounds))
+  } catch {
+    // Ignore persistence failures to avoid breaking window interactions.
+  }
+}
+
+const createNotesWindow = (): BrowserWindow => {
+  const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint())
+  const { workArea } = display
+  const savedBounds = loadNotesWindowState()
+  const defaultWidth = 360
+  const defaultHeight = Math.max(300, Math.round(workArea.height * 0.6))
+  const width = Math.max(280, Math.min(savedBounds?.width ?? defaultWidth, workArea.width))
+  const height = Math.max(300, Math.min(savedBounds?.height ?? defaultHeight, workArea.height))
+  const x =
+    savedBounds?.x ?? workArea.x + Math.max(0, workArea.width - width)
+  const y = savedBounds?.y ?? workArea.y
+
+  const newWindow = new BrowserWindow({
+    x,
+    y,
+    width,
+    height,
+    minWidth: 280,
+    minHeight: 300,
+    show: false,
+    resizable: true,
+    autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false,
+      webviewTag: false
+    },
+    vibrancy: 'fullscreen-ui',
+    backgroundMaterial: 'acrylic',
+    transparent: true,
+    hasShadow: false,
+    roundedCorners: true,
+    thickFrame: false,
+    frame: false
+  })
+
+  newWindow.on('ready-to-show', () => {
+    newWindow.show()
+  })
+
+  newWindow.on('resized', () => {
+    saveNotesWindowState(newWindow)
+  })
+
+  newWindow.on('moved', () => {
+    saveNotesWindowState(newWindow)
+  })
+
+  newWindow.on('close', () => {
+    saveNotesWindowState(newWindow)
+  })
+
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    newWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?view=notes`)
+  } else {
+    newWindow.loadFile(join(__dirname, '../renderer/index.html'), {
+      query: {
+        view: 'notes'
+      }
+    })
+  }
+
+  notesWindow = newWindow
+
+  newWindow.on('closed', () => {
+    if (notesWindow === newWindow) {
+      notesWindow = null
+    }
+  })
+
+  return newWindow
+}
+
+const openNotesWindow = (): void => {
+  if (!notesWindow || notesWindow.isDestroyed()) {
+    createNotesWindow()
+    return
+  }
+
+  if (notesWindow.isMinimized()) {
+    notesWindow.restore()
+  }
+
+  if (!notesWindow.isVisible()) {
+    notesWindow.show()
+  }
+
+  notesWindow.focus()
 }
 
 const getClockLabel = (): string => {
@@ -336,6 +490,10 @@ app.whenReady().then(() => {
     createWindow()
   })
 
+  ipcMain.on('open-notes-window', () => {
+    openNotesWindow()
+  })
+
   ipcMain.on('set-transparency-mode', (_event, enabled: boolean) => {
     const senderWindow = BrowserWindow.fromWebContents(_event.sender)
 
@@ -360,6 +518,14 @@ app.whenReady().then(() => {
   createMenuBarClock()
   setApplicationMenu()
 
+  const didRegisterNotesShortcut = globalShortcut.register(notesShortcut, () => {
+    openNotesWindow()
+  })
+
+  if (!didRegisterNotesShortcut) {
+    console.warn(`Failed to register global shortcut: ${notesShortcut}`)
+  }
+
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
@@ -380,6 +546,7 @@ app.on('window-all-closed', () => {
 
 app.on('before-quit', () => {
   isQuitting = true
+  globalShortcut.unregisterAll()
   destroyMenuBarClock()
 })
 

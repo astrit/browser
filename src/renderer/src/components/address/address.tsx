@@ -8,6 +8,7 @@ const AddressBar = ({
   onForward,
   onHome,
   onBookmark,
+  onExtensions,
   onNewWindow,
   onSettings
 }: {
@@ -17,6 +18,7 @@ const AddressBar = ({
   onForward?: () => void
   onHome?: () => void
   onBookmark?: () => void
+  onExtensions?: () => void
   onNewWindow?: () => void
   onSettings?: () => void
 }): JSX.Element => {
@@ -50,6 +52,14 @@ const AddressBar = ({
       <button data-name="bookmark" onClick={onBookmark}>
         <svg width="24" height="24" viewBox="0 0 24 24">
           <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+        </svg>
+      </button>
+      <button data-name="extensions" onClick={onExtensions}>
+        <svg width="14" height="14" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
         </svg>
       </button>
       <button data-name="new-window" onClick={onNewWindow}>

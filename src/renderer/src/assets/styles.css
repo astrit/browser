@@ -157,6 +157,12 @@ webview {
   -webkit-app-region: no-drag;
 }
 
+.splash-focus-area.is-drag-ready,
+.splash-focus-area.is-drag-ready .splash {
+  -webkit-app-region: drag;
+  cursor: grab;
+}
+
 .view-insert-hotspot {
   position: absolute;
   top: 25%;
@@ -286,6 +292,17 @@ webview.is-drag-ready {
   opacity: 1;
   pointer-events: auto;
   -webkit-app-region: drag;
+}
+
+body.meta-drag-active .bookmarks-panel,
+body.meta-drag-active .settings-panel,
+body.meta-drag-active .extensions-panel,
+body.meta-drag-active .bookmarks-panel *,
+body.meta-drag-active .settings-panel *,
+body.meta-drag-active .extensions-panel * {
+  -webkit-app-region: drag !important;
+  user-select: none;
+  cursor: grab;
 }
 
 #core > *:not(.splash) {

@@ -5,6 +5,7 @@ import AddressBar from './components/address/address'
 import Splash from './components/splash/splash'
 import Bookmarks from './components/bookmarks/bookmarks'
 import Settings from './components/settings/settings'
+import Extensions from './components/extensions/extensions'
 
 interface ViewPane {
   id: string
@@ -18,6 +19,7 @@ function App(): JSX.Element {
   const [isMetaPressed, setIsMetaPressed] = useState(false)
   const [showBookmarks, setShowBookmarks] = useState(false)
   const [showSettings, setShowSettings] = useState(false)
+  const [showExtensions, setShowExtensions] = useState(false)
   const [showAddressBar, setShowAddressBar] = useState(true)
   const [closeToMenuBar, setCloseToMenuBar] = useState(false)
   const [menuBarVisible, setMenuBarVisible] = useState(true)
@@ -80,6 +82,14 @@ function App(): JSX.Element {
   }, [isFullyTransparent])
 
   useEffect(() => {
+    document.body.classList.toggle('meta-drag-active', isMetaPressed)
+
+    return () => {
+      document.body.classList.remove('meta-drag-active')
+    }
+  }, [isMetaPressed])
+
+  useEffect(() => {
     const handleIpcMessage = (event: Event): void => {
       const { channel, args } = event as Event & { channel?: string; args?: unknown[] }
 
@@ -111,6 +121,7 @@ function App(): JSX.Element {
     const unsubscribe = window.api.onOpenSettings(() => {
       setShowSettings(true)
       setShowBookmarks(false)
+      setShowExtensions(false)
     })
 
     return () => {
@@ -183,16 +194,31 @@ function App(): JSX.Element {
     )
     setShowBookmarks(false)
     setShowSettings(false)
+    setShowExtensions(false)
   }
 
   const handleBookmark = (): void => {
     setShowBookmarks(!showBookmarks)
+    setShowSettings(false)
+    setShowExtensions(false)
+  }
+
+  const handleExtensions = (): void => {
+    setShowExtensions(!showExtensions)
+    setShowBookmarks(false)
     setShowSettings(false)
   }
 
   const handleSettings = (): void => {
     setShowSettings(!showSettings)
     setShowBookmarks(false)
+    setShowExtensions(false)
+  }
+
+  const handleOpenExtension = (action: string): void => {
+    if (action === 'open-notes-window') {
+      window.api.openNotesWindow()
+    }
   }
 
   const handleNewWindow = (): void => {
@@ -287,12 +313,13 @@ function App(): JSX.Element {
           onForward={handleForward}
           onHome={handleHome}
           onBookmark={handleBookmark}
+          onExtensions={handleExtensions}
           onNewWindow={handleNewWindow}
           onSettings={handleSettings}
         />
       )}
       <main
-        className={`content-frame${isAllViewsEmpty ? ' is-empty' : ''}${showBookmarks || showSettings ? ' show-side-panel' : ''}${!showAddressBar ? ' fullscreen' : ''}`}
+        className={`content-frame${isAllViewsEmpty ? ' is-empty' : ''}${showBookmarks || showSettings || showExtensions ? ' show-side-panel' : ''}${!showAddressBar ? ' fullscreen' : ''}`}
       >
         <section className="webview-container">
           <div className={`webview-split${views.length > 1 ? ' is-multi' : ''}`}>
@@ -321,7 +348,7 @@ function App(): JSX.Element {
                     </>
                   ) : (
                     <div
-                      className="splash-focus-area"
+                      className={`splash-focus-area${isMetaPressed ? ' is-drag-ready' : ''}`}
                       onClick={() => {
                         setFocusedViewId(view.id)
                         focusAddressInput()
@@ -394,6 +421,7 @@ function App(): JSX.Element {
           )}
         </section>
         {showBookmarks && <Bookmarks />}
+        {showExtensions && <Extensions onOpenExtension={handleOpenExtension} />}
         {showSettings && (
           <Settings
             closeToMenuBar={closeToMenuBar}

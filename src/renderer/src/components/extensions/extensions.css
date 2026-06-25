@@ -1,0 +1,81 @@
+.extensions-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(8px);
+  border-left: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  animation: slideInRight 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-sizing: border-box;
+  -webkit-app-region: no-drag;
+}
+
+.extensions-search-wrap {
+  padding: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.extensions-search-input {
+  width: 100%;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(6px);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 10px;
+  padding: 0 12px;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 200ms ease,
+    background 200ms ease;
+}
+
+.extensions-search-input:focus {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.extensions-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.extensions-empty-state {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.45);
+  padding: 8px;
+}
+
+.extension-item {
+  width: 100%;
+  text-align: left;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  transition: all 200ms ease;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 4px;
+}
+
+.extension-item:hover,
+.extension-item:focus-visible {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+  outline: none;
+}
+
+.extension-name {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.extension-description {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 2px;
+}
