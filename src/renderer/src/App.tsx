@@ -241,6 +241,42 @@ function App(): JSX.Element {
     setFocusedViewId(newView.id)
   }
 
+  const focusAddressInput = (): void => {
+    setShowAddressBar(true)
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        const input = document.getElementById('address-input') as HTMLInputElement | null
+        input?.focus()
+        input?.select()
+      })
+    })
+  }
+
+  const handleCloseView = (viewId: string): void => {
+    if (views.length <= 1) {
+      return
+    }
+
+    const closingIndex = views.findIndex((view) => view.id === viewId)
+
+    if (closingIndex === -1) {
+      return
+    }
+
+    const remainingViews = views.filter((view) => view.id !== viewId)
+
+    if (!remainingViews.length) {
+      return
+    }
+
+    setViews(remainingViews)
+
+    if (focusedViewId === viewId) {
+      const nextIndex = Math.min(closingIndex, remainingViews.length - 1)
+      setFocusedViewId(remainingViews[nextIndex].id)
+    }
+  }
+
   return (
     <>
       {showAddressBar && (
@@ -284,7 +320,27 @@ function App(): JSX.Element {
                       />
                     </>
                   ) : (
-                    <div onMouseDown={() => setFocusedViewId(view.id)}>
+                    <div
+                      className="splash-focus-area"
+                      onClick={() => {
+                        setFocusedViewId(view.id)
+                        focusAddressInput()
+                      }}
+                      onFocus={() => {
+                        setFocusedViewId(view.id)
+                        focusAddressInput()
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault()
+                          setFocusedViewId(view.id)
+                          focusAddressInput()
+                        }
+                      }}
+                      onMouseDown={() => setFocusedViewId(view.id)}
+                      role="button"
+                      tabIndex={0}
+                    >
                       <Splash />
                     </div>
                   )}
@@ -308,6 +364,31 @@ function App(): JSX.Element {
                   onClick={() => handleAddView('right')}
                   type="button"
                 />
+              </div>
+            </>
+          )}
+
+          {views.length > 1 && (
+            <>
+              <div className="view-close-hotspot is-left">
+                <button
+                  aria-label="Close left split"
+                  className="view-close-handle"
+                  onClick={() => handleCloseView(views[0].id)}
+                  type="button"
+                >
+                  ×
+                </button>
+              </div>
+              <div className="view-close-hotspot is-right">
+                <button
+                  aria-label="Close right split"
+                  className="view-close-handle"
+                  onClick={() => handleCloseView(views[views.length - 1].id)}
+                  type="button"
+                >
+                  ×
+                </button>
               </div>
             </>
           )}

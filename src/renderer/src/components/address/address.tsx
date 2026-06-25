@@ -40,7 +40,13 @@ const AddressBar = ({
           <path d="M15 14L19.9149 17.4415" />
         </svg>
       </button>
-      <input type="text" placeholder="/" value={url} onChange={(e) => setUrl(e.target.value)} />
+      <input
+        id="address-input"
+        type="text"
+        placeholder="/"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+      />
       <button data-name="bookmark" onClick={onBookmark}>
         <svg width="24" height="24" viewBox="0 0 24 24">
           <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>

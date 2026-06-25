@@ -136,6 +136,27 @@ webview {
   height: 100%;
 }
 
+.splash-focus-area {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: var(--border-radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  -webkit-app-region: no-drag;
+  cursor: text;
+}
+
+.splash-focus-area:hover,
+.splash-focus-area:focus-visible {
+  border-color: rgba(255, 255, 255, 0.28);
+  outline: none;
+}
+
+.splash-focus-area .splash {
+  -webkit-app-region: no-drag;
+}
+
 .view-insert-hotspot {
   position: absolute;
   top: 25%;
@@ -162,6 +183,32 @@ webview {
   opacity: 1;
 }
 
+.view-close-hotspot {
+  position: absolute;
+  top: 25%;
+  height: 50%;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: auto;
+  transition: opacity 120ms ease;
+  z-index: 26;
+}
+
+.view-close-hotspot.is-left {
+  left: 0;
+}
+
+.view-close-hotspot.is-right {
+  right: 0;
+}
+
+.view-close-hotspot:hover {
+  opacity: 1;
+}
+
 .view-insert-handle {
   width: 6px;
   height: 24px;
@@ -175,6 +222,28 @@ webview {
 
 .view-insert-handle:hover {
   background: rgba(255, 255, 255, 1);
+}
+
+.view-close-handle {
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-close-handle:hover,
+.view-close-handle:focus-visible {
+  background: rgba(0, 0, 0, 0.65);
+  outline: none;
 }
 
 .content-frame.show-side-panel .webview-container {
@@ -239,6 +308,11 @@ body.full-transparent .content-frame,
 body.full-transparent .webview-split,
 body.full-transparent .webview-pane {
   background: transparent;
+}
+
+body.full-transparent .splash-focus-area {
+  background: transparent !important;
+  backdrop-filter: none !important;
 }
 
 body.full-transparent .bookmarks-panel,
