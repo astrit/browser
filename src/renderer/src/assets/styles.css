@@ -142,13 +142,16 @@ webview {
   height: 100%;
   box-sizing: border-box;
   border-radius: var(--border-radius);
-  border: 1px solid rgba(255, 255, 255, 0.1);
   -webkit-app-region: no-drag;
+}
+
+.splash-focus-area.is-split {
+  border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: text;
 }
 
-.splash-focus-area:hover,
-.splash-focus-area:focus-visible {
+.splash-focus-area.is-split:hover,
+.splash-focus-area.is-split:focus-visible {
   border-color: rgba(255, 255, 255, 0.28);
   outline: none;
 }

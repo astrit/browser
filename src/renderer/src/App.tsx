@@ -169,6 +169,32 @@ function App(): JSX.Element {
     }
   }, [])
 
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent): void => {
+      const target = event.target as Node | null
+      const addressInput = document.getElementById('address-input') as HTMLInputElement | null
+      const addressBar = document.querySelector('nav.address')
+
+      if (!target || !addressInput || !addressBar) {
+        return
+      }
+
+      if (addressBar.contains(target)) {
+        return
+      }
+
+      if (document.activeElement === addressInput) {
+        addressInput.blur()
+      }
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+    }
+  }, [])
+
   const handleBack = (): void => {
     const webview = webviewRefs.current[focusedViewId] as unknown as { goBack: () => void }
     webview?.goBack?.()
@@ -347,29 +373,37 @@ function App(): JSX.Element {
                       />
                     </>
                   ) : (
-                    <div
-                      className={`splash-focus-area${isMetaPressed ? ' is-drag-ready' : ''}`}
-                      onClick={() => {
-                        setFocusedViewId(view.id)
-                        focusAddressInput()
-                      }}
-                      onFocus={() => {
-                        setFocusedViewId(view.id)
-                        focusAddressInput()
-                      }}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                          event.preventDefault()
-                          setFocusedViewId(view.id)
-                          focusAddressInput()
-                        }
-                      }}
-                      onMouseDown={() => setFocusedViewId(view.id)}
-                      role="button"
-                      tabIndex={0}
-                    >
-                      <Splash />
-                    </div>
+                    <>
+                      {views.length > 1 ? (
+                        <div
+                          className={`splash-focus-area is-split${isMetaPressed ? ' is-drag-ready' : ''}`}
+                          onClick={() => {
+                            setFocusedViewId(view.id)
+                            focusAddressInput()
+                          }}
+                          onFocus={() => {
+                            setFocusedViewId(view.id)
+                            focusAddressInput()
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                              event.preventDefault()
+                              setFocusedViewId(view.id)
+                              focusAddressInput()
+                            }
+                          }}
+                          onMouseDown={() => setFocusedViewId(view.id)}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          <Splash />
+                        </div>
+                      ) : (
+                        <div onMouseDown={() => setFocusedViewId(view.id)}>
+                          <Splash />
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               )

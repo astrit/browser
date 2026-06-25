@@ -136,8 +136,7 @@ const createNotesWindow = (): BrowserWindow => {
   const defaultHeight = Math.max(300, Math.round(workArea.height * 0.6))
   const width = Math.max(280, Math.min(savedBounds?.width ?? defaultWidth, workArea.width))
   const height = Math.max(300, Math.min(savedBounds?.height ?? defaultHeight, workArea.height))
-  const x =
-    savedBounds?.x ?? workArea.x + Math.max(0, workArea.width - width)
+  const x = savedBounds?.x ?? workArea.x + Math.max(0, workArea.width - width)
   const y = savedBounds?.y ?? workArea.y
 
   const newWindow = new BrowserWindow({
