@@ -146,6 +146,20 @@ function App(): JSX.Element {
         event.preventDefault()
         setIsFullyTransparent((prev) => !prev)
       }
+
+      // Cmd+J to open DevTools
+      if (event.metaKey && !event.shiftKey && event.key.toLowerCase() === 'j') {
+        event.preventDefault()
+        window.api.openDevTools()
+        setDevToolsOpen(true)
+      }
+
+      // Cmd+Shift+J to close DevTools
+      if (event.metaKey && event.shiftKey && event.key.toLowerCase() === 'j') {
+        event.preventDefault()
+        window.api.closeDevTools()
+        setDevToolsOpen(false)
+      }
     }
 
     const handleKeyUp = (event: KeyboardEvent): void => {
@@ -253,6 +267,18 @@ function App(): JSX.Element {
 
   const handleTransparencyToggle = (): void => {
     setIsFullyTransparent((prev) => !prev)
+  }
+
+  const [devToolsOpen, setDevToolsOpen] = useState(false)
+
+  const handleOpenDevTools = (): void => {
+    window.api.openDevTools()
+    setDevToolsOpen(true)
+  }
+
+  const handleCloseDevTools = (): void => {
+    window.api.closeDevTools()
+    setDevToolsOpen(false)
   }
 
   const setFocusedUrl: React.Dispatch<React.SetStateAction<string>> = (nextUrl) => {
@@ -459,10 +485,13 @@ function App(): JSX.Element {
         {showSettings && (
           <Settings
             closeToMenuBar={closeToMenuBar}
+            devToolsOpen={devToolsOpen}
             isFullyTransparent={isFullyTransparent}
             menuBarVisible={menuBarVisible}
             onCloseToMenuBarToggle={() => setCloseToMenuBar((prev) => !prev)}
+            onCloseDevTools={handleCloseDevTools}
             onMenuBarVisibleToggle={() => setMenuBarVisible((prev) => !prev)}
+            onOpenDevTools={handleOpenDevTools}
             onTransparencyToggle={handleTransparencyToggle}
           />
         )}

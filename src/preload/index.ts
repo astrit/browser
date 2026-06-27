@@ -42,6 +42,12 @@ const api = {
     return () => {
       ipcRenderer.removeListener('app-preferences', listener)
     }
+  },
+  openDevTools: (): void => {
+    ipcRenderer.send('open-devtools')
+  },
+  closeDevTools: (): void => {
+    ipcRenderer.send('close-devtools')
   }
 }
 

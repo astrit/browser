@@ -513,6 +513,16 @@ app.whenReady().then(() => {
 
   ipcMain.handle('get-app-preferences', () => getAppPreferences())
 
+  ipcMain.on('open-devtools', (_event) => {
+    const senderWindow = BrowserWindow.fromWebContents(_event.sender)
+    senderWindow?.webContents.openDevTools({ mode: 'detach' })
+  })
+
+  ipcMain.on('close-devtools', (_event) => {
+    const senderWindow = BrowserWindow.fromWebContents(_event.sender)
+    senderWindow?.webContents.closeDevTools()
+  })
+
   createWindow()
   createMenuBarClock()
   setApplicationMenu()

@@ -11,6 +11,8 @@ interface CoreAPI {
   onAppPreferences: (
     callback: (preferences: { closeToMenuBar: boolean; menuBarVisible: boolean }) => void
   ) => () => void
+  openDevTools: () => void
+  closeDevTools: () => void
 }
 
 declare global {
