@@ -48,6 +48,11 @@ const AddressBar = ({
         placeholder="/"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            e.currentTarget.blur()
+          }
+        }}
       />
       <button data-name="bookmark" onClick={onBookmark}>
         <svg width="24" height="24" viewBox="0 0 24 24">
