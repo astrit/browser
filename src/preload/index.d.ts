@@ -13,6 +13,8 @@ interface CoreAPI {
   ) => () => void
   openDevTools: () => void
   closeDevTools: () => void
+  closeWindow: () => void
+  onCmdQ: (callback: () => void) => () => void
 }
 
 declare global {

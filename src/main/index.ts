@@ -289,7 +289,6 @@ const setApplicationMenu = (): void => {
         },
         {
           label: 'Quit',
-          accelerator: 'Command+Q',
           click: () => {
             isQuitting = true
             app.quit()
@@ -523,6 +522,11 @@ app.whenReady().then(() => {
     senderWindow?.webContents.closeDevTools()
   })
 
+  ipcMain.on('close-window', (_event) => {
+    const senderWindow = BrowserWindow.fromWebContents(_event.sender)
+    senderWindow?.close()
+  })
+
   createWindow()
   createMenuBarClock()
   setApplicationMenu()
@@ -544,6 +548,15 @@ app.whenReady().then(() => {
   globalShortcut.register('CommandOrControl+Shift+J', () => {
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.closeDevTools()
+    }
+  })
+
+  globalShortcut.register('CommandOrControl+Q', () => {
+    if (mainWindow && !mainWindow.isDestroyed() && mainWindow.isFocused()) {
+      mainWindow.webContents.send('cmd-q')
+    } else {
+      isQuitting = true
+      app.quit()
     }
   })
 

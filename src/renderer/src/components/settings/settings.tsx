@@ -51,6 +51,24 @@ const dummyShortcuts: Shortcut[] = [
     name: 'Toggle Transparency',
     description: 'Enable or disable fully transparent browser mode',
     keys: 'Ctrl+T'
+  },
+  {
+    id: '8',
+    name: 'Close / Go Home',
+    description: 'Go to splash if on a page; close window if already on splash',
+    keys: 'Cmd+Q'
+  },
+  {
+    id: '9',
+    name: 'Open DevTools',
+    description: 'Open the developer tools inspector',
+    keys: 'Cmd+J'
+  },
+  {
+    id: '10',
+    name: 'Close DevTools',
+    description: 'Close the developer tools inspector',
+    keys: 'Cmd+Shift+J'
   }
 ]
 

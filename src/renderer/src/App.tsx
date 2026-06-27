@@ -130,6 +130,25 @@ function App(): JSX.Element {
   }, [])
 
   useEffect(() => {
+    const unsubscribe = window.api.onCmdQ(() => {
+      setViews((prevViews) => {
+        const focused = prevViews.find((v) => v.id === focusedViewId) ?? prevViews[0]
+        if (focused?.url) {
+          // Has URL — go to splash
+          return prevViews.map((v) => (v.id === focused.id ? { ...v, url: '' } : v))
+        }
+        // Already on splash — close window
+        window.api.closeWindow()
+        return prevViews
+      })
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [focusedViewId])
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent): void => {
       if (event.key === 'Meta') {
         setIsMetaPressed(true)

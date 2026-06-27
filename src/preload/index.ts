@@ -48,6 +48,16 @@ const api = {
   },
   closeDevTools: (): void => {
     ipcRenderer.send('close-devtools')
+  },
+  closeWindow: (): void => {
+    ipcRenderer.send('close-window')
+  },
+  onCmdQ: (callback: () => void): (() => void) => {
+    const listener = (): void => callback()
+    ipcRenderer.on('cmd-q', listener)
+    return () => {
+      ipcRenderer.removeListener('cmd-q', listener)
+    }
   }
 }
 
