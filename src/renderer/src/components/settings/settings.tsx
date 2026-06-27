@@ -105,7 +105,18 @@ const Settings: React.FC<{
   })
 
   return (
-    <aside className="settings-panel">
+    <aside
+      className="settings-panel"
+      onMouseDown={(e) => {
+        const target = e.target as HTMLElement
+        if (!target.closest('.settings-search-wrap')) {
+          const input = (e.currentTarget as HTMLElement).querySelector(
+            '.settings-search-input'
+          ) as HTMLInputElement | null
+          input?.blur()
+        }
+      }}
+    >
       <div className="panel-header">Settings</div>
       <div className="settings-search-wrap">
         <input

@@ -146,20 +146,6 @@ function App(): JSX.Element {
         event.preventDefault()
         setIsFullyTransparent((prev) => !prev)
       }
-
-      // Cmd+J to open DevTools
-      if (event.metaKey && !event.shiftKey && event.key.toLowerCase() === 'j') {
-        event.preventDefault()
-        window.api.openDevTools()
-        setDevToolsOpen(true)
-      }
-
-      // Cmd+Shift+J to close DevTools
-      if (event.metaKey && event.shiftKey && event.key.toLowerCase() === 'j') {
-        event.preventDefault()
-        window.api.closeDevTools()
-        setDevToolsOpen(false)
-      }
     }
 
     const handleKeyUp = (event: KeyboardEvent): void => {
@@ -425,7 +411,12 @@ function App(): JSX.Element {
                           <Splash />
                         </div>
                       ) : (
-                        <div onMouseDown={() => setFocusedViewId(view.id)}>
+                        <div
+                          onMouseDown={(e) => {
+                            e.preventDefault()
+                            setFocusedViewId(view.id)
+                          }}
+                        >
                           <Splash />
                         </div>
                       )}

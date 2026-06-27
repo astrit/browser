@@ -535,6 +535,18 @@ app.whenReady().then(() => {
     console.warn(`Failed to register global shortcut: ${notesShortcut}`)
   }
 
+  globalShortcut.register('CommandOrControl+J', () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.openDevTools({ mode: 'detach' })
+    }
+  })
+
+  globalShortcut.register('CommandOrControl+Shift+J', () => {
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.closeDevTools()
+    }
+  })
+
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
