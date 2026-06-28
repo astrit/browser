@@ -69,6 +69,12 @@ const dummyShortcuts: Shortcut[] = [
     name: 'Close DevTools',
     description: 'Close the developer tools inspector',
     keys: 'Cmd+Shift+J'
+  },
+  {
+    id: '11',
+    name: 'Open cmd',
+    description: 'Open the cmd app window',
+    keys: 'Cmd+K'
   }
 ]
 

@@ -18,6 +18,7 @@ import icon from '../../512x512.png?asset'
 
 let mainWindow: BrowserWindow | null = null
 let notesWindow: BrowserWindow | null = null
+let cmdWindow: BrowserWindow | null = null
 let menuBarTray: Tray | null = null
 let clockTimer: NodeJS.Timeout | null = null
 let isQuitting = false
@@ -216,6 +217,69 @@ const openNotesWindow = (): void => {
   }
 
   notesWindow.focus()
+}
+
+const createCmdWindow = (): BrowserWindow => {
+  const newWindow = new BrowserWindow({
+    width: 900,
+    height: 670,
+    show: false,
+    autoHideMenuBar: true,
+    ...(process.platform === 'linux' ? { icon } : {}),
+    webPreferences: {
+      preload: join(__dirname, '../preload/index.js'),
+      sandbox: false,
+      webviewTag: false
+    },
+    vibrancy: 'fullscreen-ui',
+    backgroundMaterial: 'acrylic',
+    transparent: true,
+    hasShadow: false,
+    roundedCorners: true,
+    thickFrame: false,
+    frame: false
+  })
+
+  newWindow.on('ready-to-show', () => {
+    newWindow.show()
+  })
+
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    newWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}?view=cmd`)
+  } else {
+    newWindow.loadFile(join(__dirname, '../renderer/index.html'), {
+      query: {
+        view: 'cmd'
+      }
+    })
+  }
+
+  cmdWindow = newWindow
+
+  newWindow.on('closed', () => {
+    if (cmdWindow === newWindow) {
+      cmdWindow = null
+    }
+  })
+
+  return newWindow
+}
+
+const openCmdWindow = (): void => {
+  if (!cmdWindow || cmdWindow.isDestroyed()) {
+    createCmdWindow()
+    return
+  }
+
+  if (cmdWindow.isMinimized()) {
+    cmdWindow.restore()
+  }
+
+  if (!cmdWindow.isVisible()) {
+    cmdWindow.show()
+  }
+
+  cmdWindow.focus()
 }
 
 const getClockLabel = (): string => {
@@ -482,6 +546,13 @@ app.whenReady().then(() => {
     window.webContents.on('before-input-event', (event, input) => {
       const isCommand = input.meta || input.control
       const isJ = input.key.toLowerCase() === 'j'
+      const isK = input.key.toLowerCase() === 'k'
+
+      if (isCommand && isK) {
+        event.preventDefault()
+        openCmdWindow()
+        return
+      }
 
       if (!isCommand || !isJ) {
         return
@@ -508,6 +579,10 @@ app.whenReady().then(() => {
 
   ipcMain.on('open-notes-window', () => {
     openNotesWindow()
+  })
+
+  ipcMain.on('open-cmd-window', () => {
+    openCmdWindow()
   })
 
   ipcMain.on('set-transparency-mode', (_event, enabled: boolean) => {

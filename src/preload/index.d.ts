@@ -3,6 +3,7 @@ import { ElectronAPI } from '@electron-toolkit/preload'
 interface CoreAPI {
   newWindow: () => void
   openNotesWindow: () => void
+  openCmdWindow: () => void
   setTransparencyMode: (enabled: boolean) => void
   setCloseToMenuBar: (enabled: boolean) => void
   setMenuBarVisible: (enabled: boolean) => void

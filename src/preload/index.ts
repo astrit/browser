@@ -9,6 +9,9 @@ const api = {
   openNotesWindow: (): void => {
     ipcRenderer.send('open-notes-window')
   },
+  openCmdWindow: (): void => {
+    ipcRenderer.send('open-cmd-window')
+  },
   setTransparencyMode: (enabled: boolean): void => {
     ipcRenderer.send('set-transparency-mode', enabled)
   },
