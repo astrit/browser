@@ -478,6 +478,24 @@ app.whenReady().then(() => {
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
+
+    window.webContents.on('before-input-event', (event, input) => {
+      const isCommand = input.meta || input.control
+      const isJ = input.key.toLowerCase() === 'j'
+
+      if (!isCommand || !isJ) {
+        return
+      }
+
+      event.preventDefault()
+
+      if (input.shift) {
+        window.webContents.closeDevTools()
+        return
+      }
+
+      window.webContents.openDevTools({ mode: 'detach' })
+    })
   })
 
   // IPC test
@@ -538,18 +556,6 @@ app.whenReady().then(() => {
   if (!didRegisterNotesShortcut) {
     console.warn(`Failed to register global shortcut: ${notesShortcut}`)
   }
-
-  globalShortcut.register('CommandOrControl+J', () => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.openDevTools({ mode: 'detach' })
-    }
-  })
-
-  globalShortcut.register('CommandOrControl+Shift+J', () => {
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      mainWindow.webContents.closeDevTools()
-    }
-  })
 
   globalShortcut.register('CommandOrControl+Q', () => {
     if (mainWindow && !mainWindow.isDestroyed() && mainWindow.isFocused()) {
