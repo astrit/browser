@@ -72,13 +72,13 @@ webview,
   box-sizing: border-box;
 }
 
-webview {
+/* webview {
   -webkit-app-region: no-drag;
 }
 
 .splash {
   -webkit-app-region: drag;
-}
+} */
 
 .content-frame {
   position: relative;
