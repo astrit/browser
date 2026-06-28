@@ -7,7 +7,7 @@ import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker'
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker'
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker'
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
-import './assets/notes.css'
+import './notes.css'
 
 interface NoteItem {
   id: string
@@ -63,7 +63,7 @@ const createNote = (index: number): NoteItem => {
   }
 }
 
-function NotesApp(): JSX.Element {
+function Notes(): JSX.Element {
   const [notes, setNotes] = useState<NoteItem[]>([createNote(1)])
   const [activeId, setActiveId] = useState<string>(notes[0].id)
   const [isMetaPressed, setIsMetaPressed] = useState(false)
@@ -146,7 +146,7 @@ function NotesApp(): JSX.Element {
           value={activeNote?.title ?? ''}
         />
         <button className="notes-close" onClick={handleCloseWindow} type="button">
-          ×
+          x
         </button>
       </header>
 
@@ -241,4 +241,4 @@ function NotesApp(): JSX.Element {
   )
 }
 
-export default NotesApp
+export default Notes

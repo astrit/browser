@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import NotesApp from './NotesApp'
+import { getExtensionWindowView } from './extensions/registry'
 
 const params = new URLSearchParams(window.location.search)
-const RootComponent = params.get('view') === 'notes' ? NotesApp : App
+const RootComponent = getExtensionWindowView(params.get('view')) ?? App
 
 ReactDOM.createRoot(document.getElementById('core') as HTMLElement).render(
   <React.StrictMode>

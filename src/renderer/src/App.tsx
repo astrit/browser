@@ -6,6 +6,7 @@ import Splash from './components/splash/splash'
 import Bookmarks from './components/bookmarks/bookmarks'
 import Settings from './components/settings/settings'
 import Extensions from './components/extensions/extensions'
+import { runExtensionAction } from './extensions/registry'
 
 interface ViewPane {
   id: string
@@ -261,9 +262,7 @@ function App(): JSX.Element {
   }
 
   const handleOpenExtension = (action: string): void => {
-    if (action === 'open-notes-window') {
-      window.api.openNotesWindow()
-    }
+    runExtensionAction(action)
   }
 
   const handleNewWindow = (): void => {
