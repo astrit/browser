@@ -221,9 +221,14 @@ const openNotesWindow = (): void => {
 
 const createCmdWindow = (): BrowserWindow => {
   const newWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 760,
+    height: 620,
+    minWidth: 760,
+    minHeight: 620,
+    maxWidth: 760,
+    maxHeight: 620,
     show: false,
+    resizable: false,
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -231,8 +236,6 @@ const createCmdWindow = (): BrowserWindow => {
       sandbox: false,
       webviewTag: false
     },
-    vibrancy: 'fullscreen-ui',
-    backgroundMaterial: 'acrylic',
     transparent: true,
     hasShadow: false,
     roundedCorners: true,
