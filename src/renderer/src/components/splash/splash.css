@@ -19,7 +19,6 @@
   align-items: center;
   justify-content: center;
   gap: 2lh;
-  pointer-events: none;
 
   svg {
     width: 48px;
