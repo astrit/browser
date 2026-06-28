@@ -39,5 +39,6 @@
     color: hsla(0, 0%, 100%, 0.6);
     font-weight: 300;
     font-variant-numeric: tabular-nums slashed-zero;
+    pointer-events: none;
   }
 }
