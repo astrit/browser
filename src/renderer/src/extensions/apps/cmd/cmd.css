@@ -1,16 +1,3 @@
-html,
-body,
-#core {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  overflow: hidden;
-}
-
 .cmd-root {
   position: relative;
   width: 100%;
@@ -28,6 +15,8 @@ body {
     sans-serif;
   background: transparent;
   -webkit-app-region: drag;
+  backdrop-filter: blur(20px);
+  background-color: rgba(16, 18, 24, 0.58);
 }
 
 .cmd-panel {
